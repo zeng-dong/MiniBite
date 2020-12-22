@@ -47,13 +47,15 @@ namespace MiniBite.Api
 
             services.AddControllers();
 
+            var secret = Configuration["SuperSecret"].ToString();
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo
                 {
                     Version = "v1",
                     Title = "Multiple APIs",
-                    Description = "A simple API to .... from ...",
+                    Description = secret,
                     Contact = new OpenApiContact
                     {
                         Name = "Multiple APIs",
