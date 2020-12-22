@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using MassTransit;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -7,6 +8,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using MiniBite.Api.Inventory.DataAccess;
+using MiniBite.Api.Messages.Components.Cosumers;
+using MiniBite.Api.Messages.Contracts;
 using MiniBite.Api.Purchasing.DataAccess;
 using MiniBite.Api.Purchasing.Services;
 using System;
@@ -25,6 +28,13 @@ namespace MiniBite.Api
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddMediator(cfg =>
+            {
+                cfg.AddConsumersFromNamespaceContaining<ProductAddedConsumerOnPurchasing>();
+
+                cfg.AddRequestClient<IProductAdded>();
+            });
+
             services.AddDbContext<InventoryDbContext>(options =>
             {
                 options.UseInMemoryDatabase(databaseName: "minibite-inventory");
