@@ -14,6 +14,8 @@ using MiniBite.Api.Messages.Contracts;
 using MiniBite.Api.Purchasing.DataAccess;
 using MiniBite.Api.Purchasing.Services;
 using MiniBite.Api.Sales.Entities;
+using MiniBite.Api.Sales.Extensions;
+using MiniBite.Api.Sales.Messaging;
 using System;
 using System.Linq;
 
@@ -115,6 +117,8 @@ namespace MiniBite.Api
             services.AddSingleton<PurchasingDbInitializer>();
 
             services.AddSingleton<IMessageBus, AzureServiceBusMessageBus>();
+
+            services.AddSingleton<IAzureServiceBusConsumer, AzureServiceBusConsumer>();
         }
 
         public void Configure(IApplicationBuilder app,
@@ -149,6 +153,8 @@ namespace MiniBite.Api
             {
                 endpoints.MapControllers();
             });
+
+            app.UseSalesAzureServiceBusConsumer();
         }
     }
 }

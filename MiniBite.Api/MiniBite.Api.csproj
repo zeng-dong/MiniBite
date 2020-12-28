@@ -7,7 +7,7 @@
 
   <ItemGroup>
     <Folder Include="Catalog\" />
-    <Folder Include="Sales\NewFolder\" />
+    <Folder Include="Sales\NewFolder1\" />
   </ItemGroup>
 
   <ItemGroup>
