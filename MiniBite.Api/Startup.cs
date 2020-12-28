@@ -12,6 +12,7 @@ using MiniBite.Api.Messages.Components.Cosumers;
 using MiniBite.Api.Messages.Contracts;
 using MiniBite.Api.Purchasing.DataAccess;
 using MiniBite.Api.Purchasing.Services;
+using MiniBite.Api.Sales.Entities;
 using System;
 using System.Linq;
 
@@ -28,6 +29,32 @@ namespace MiniBite.Api
 
         public void ConfigureServices(IServiceCollection services)
         {
+            var asbcs = Configuration["AzureServiceBusConnectionString"].ToString();
+            string ticketOrdersTopic = "ticket-orders";
+            var azureServiceBus = Bus.Factory.CreateUsingAzureServiceBus(busFactoryConfig =>
+            {
+                busFactoryConfig.Message<TicketOrder>(configTopology => { configTopology.SetEntityName(ticketOrdersTopic); });
+
+                busFactoryConfig.Host(asbcs, hostConfig =>
+                {
+                    hostConfig.TransportType = Microsoft.Azure.ServiceBus.TransportType.AmqpWebSockets;
+                });
+            });
+            services.AddMassTransit(config => config.AddBus(provider => azureServiceBus));
+            services.AddSingleton<IPublishEndpoint>(azureServiceBus);
+            services.AddSingleton<ISendEndpointProvider>(azureServiceBus);
+            services.AddSingleton<IBus>(azureServiceBus);            // optional
+
+            // I try to use inmemory bus here
+            //var inMemorybus = Bus.Factory.CreateUsingInMemory(sbc =>
+            //{
+            //    sbc.ReceiveEndpoint("order_queue", ep =>
+            //    {
+            //        ep.Consumer<MessageConsumerOne>();
+            //        ep.Consumer<MessageConsumerTwo>();
+            //    });
+            //});
+
             services.AddMediator(cfg =>
             {
                 cfg.AddConsumersFromNamespaceContaining<ProductAddedConsumerOnPurchasing>();

@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30804.86
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiniBite.Api", "MiniBite.Api\MiniBite.Api.csproj", "{29350E12-60C6-4AC4-876B-50D42D898A9E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MiniBite.Api", "MiniBite.Api\MiniBite.Api.csproj", "{29350E12-60C6-4AC4-876B-50D42D898A9E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiniBite.ConsoleSubscriber", "MiniBite.ConsoleSubscriber\MiniBite.ConsoleSubscriber.csproj", "{88E1D730-9607-4E20-B144-06B8BBC162F4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{29350E12-60C6-4AC4-876B-50D42D898A9E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{29350E12-60C6-4AC4-876B-50D42D898A9E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{29350E12-60C6-4AC4-876B-50D42D898A9E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{88E1D730-9607-4E20-B144-06B8BBC162F4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{88E1D730-9607-4E20-B144-06B8BBC162F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{88E1D730-9607-4E20-B144-06B8BBC162F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{88E1D730-9607-4E20-B144-06B8BBC162F4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
