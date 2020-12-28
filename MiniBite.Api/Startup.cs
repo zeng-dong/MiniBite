@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using MiniBite.Api.Integration;
 using MiniBite.Api.Inventory.DataAccess;
 using MiniBite.Api.Messages.Components.Cosumers;
 using MiniBite.Api.Messages.Contracts;
@@ -112,6 +113,8 @@ namespace MiniBite.Api
             services.AddHttpClient<IInventoryService, InventoryService>(c =>
                 c.BaseAddress = new Uri(Configuration["ApiConfigs:Inventory:Uri"]));
             services.AddSingleton<PurchasingDbInitializer>();
+
+            services.AddSingleton<IMessageBus, AzureServiceBusMessageBus>();
         }
 
         public void Configure(IApplicationBuilder app,
