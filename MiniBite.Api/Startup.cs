@@ -36,6 +36,7 @@ namespace MiniBite.Api
         {
             var asbcs = Configuration["AzureServiceBusConnectionString"].ToString();
             string ticketOrdersTopic = "ticket-orders";
+
             var azureServiceBus = Bus.Factory.CreateUsingAzureServiceBus(busFactoryConfig =>
             {
                 busFactoryConfig.Message<TicketOrder>(configTopology => { configTopology.SetEntityName(ticketOrdersTopic); });
@@ -53,12 +54,21 @@ namespace MiniBite.Api
             // I try to use inmemory bus here
             //var inMemorybus = Bus.Factory.CreateUsingInMemory(sbc =>
             //{
+            //
+            //
             //    sbc.ReceiveEndpoint("order_queue", ep =>
             //    {
+            //        ep.Handler<OrderMessage>(context =>
+            //        {
+            //            return Console.Out.WriteLineAsync($"Received: its text is {context.Message.Text}, its order ID is {context.Message.OrderId}");
+            //        });
+            //
             //        ep.Consumer<MessageConsumerOne>();
             //        ep.Consumer<MessageConsumerTwo>();
             //    });
             //});
+            //services.AddMassTransit(config => config.AddBus(provider => inMemorybus));
+            //services.AddSingleton<IBus>(inMemorybus);
 
             services.AddMediator(cfg =>
             {
@@ -118,8 +128,10 @@ namespace MiniBite.Api
                 c.BaseAddress = new Uri(Configuration["ApiConfigs:Inventory:Uri"]));
             services.AddSingleton<PurchasingDbInitializer>();
 
+            // I use this bus to post
             services.AddSingleton<IMessageBus, AzureServiceBusMessageBus>();
 
+            // I use these consumers to consume
             services.AddSingleton<ISalesAzureServiceBusConsumer, SalesAzureServiceBusConsumer>();
             services.AddSingleton<IPurchasingAzureServiceBusConsumer, PurchasingAzureServiceBusConsumer>();
         }

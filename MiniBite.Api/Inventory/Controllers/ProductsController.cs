@@ -20,6 +20,7 @@ namespace MiniBite.Api.Inventory.Controllers
         readonly InventoryDbContext _context;
         readonly IRequestClient<IProductAdded> _productAddedClient;
         readonly IMessageBus _messageBus;
+        //private IBus _bus;
 
         public ProductsController(InventoryDbContext context, IRequestClient<IProductAdded> productAddedClient, IMessageBus messageBus)
         {
@@ -28,6 +29,13 @@ namespace MiniBite.Api.Inventory.Controllers
             _messageBus = messageBus;
         }
 
+        //public ProductsController(InventoryDbContext context, IMessageBus messageBus, IBus bus)
+        //{
+        //    _context = context;
+        //    _messageBus = messageBus;
+        //    _bus = bus;
+        //}
+
         [HttpGet("products")]
         public async Task<ActionResult> GetAll()
         {
@@ -35,7 +43,32 @@ namespace MiniBite.Api.Inventory.Controllers
             return Ok(all);
         }
 
-        [HttpPost]
+        //[HttpPost("post-to-inmemory")]
+        //public async Task<ActionResult> Create(string code, string description, CancellationToken cancellationToken)
+        //{
+        //    try
+        //    {
+        //        var msg = new OrderMessage()
+        //        {
+        //            OrderId = 124,
+        //            Text = "testing mess"
+        //        };
+        //
+        //        await _bus.Publish(msg);
+        //
+        //        return Ok(msg);
+        //    }
+        //    catch (RequestTimeoutException)
+        //    {
+        //        return StatusCode((int)HttpStatusCode.RequestTimeout);
+        //    }
+        //    catch (Exception)
+        //    {
+        //        return StatusCode((int)HttpStatusCode.RequestTimeout);
+        //    }
+        //}
+
+        [HttpPost("masstransit-mediator")]
         public async Task<ActionResult> Create(string code, string description, CancellationToken cancellationToken)
         {
             try

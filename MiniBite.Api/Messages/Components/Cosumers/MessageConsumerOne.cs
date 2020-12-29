@@ -12,7 +12,7 @@ namespace MiniBite.Api.Messages.Components.Cosumers
             //_logger.Log(LogLevel.Debug, $"MessageConsumer-1: OrderId: {context.Message.OrderId} text: {context.Message.Text}");
             //_logger.Log(LogLevel.Debug, $"Taking care of OrderMessage by Cosumer-1");
             Console.Out.WriteLineAsync($"MessageConsumer-1: OrderId: {context.Message.OrderId} text: {context.Message.Text}");
-            Console.Out.WriteLineAsync($"Taking care of OrderMessage by Cosumer-1");
+            Console.Out.WriteLineAsync($"Taking care of OrderMessage by Consumer-1");
 
             return Task.CompletedTask;
         }
