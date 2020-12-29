@@ -20,21 +20,21 @@ namespace MiniBite.Api.Inventory.Controllers
         readonly InventoryDbContext _context;
         readonly IRequestClient<IProductAdded> _productAddedClient;
         readonly IMessageBus _messageBus;
-        //private IBus _bus;
+        private IBus _bus;
 
-        public ProductsController(InventoryDbContext context, IRequestClient<IProductAdded> productAddedClient, IMessageBus messageBus)
-        {
-            _context = context;
-            _productAddedClient = productAddedClient;
-            _messageBus = messageBus;
-        }
-
-        //public ProductsController(InventoryDbContext context, IMessageBus messageBus, IBus bus)
+        //public ProductsController(InventoryDbContext context, IRequestClient<IProductAdded> productAddedClient, IMessageBus messageBus)
         //{
         //    _context = context;
+        //    _productAddedClient = productAddedClient;
         //    _messageBus = messageBus;
-        //    _bus = bus;
         //}
+
+        public ProductsController(InventoryDbContext context, IMessageBus messageBus, IBus bus)
+        {
+            _context = context;
+            _messageBus = messageBus;
+            _bus = bus;
+        }
 
         [HttpGet("products")]
         public async Task<ActionResult> GetAll()
@@ -43,46 +43,33 @@ namespace MiniBite.Api.Inventory.Controllers
             return Ok(all);
         }
 
-        //[HttpPost("post-to-inmemory")]
-        //public async Task<ActionResult> Create(string code, string description, CancellationToken cancellationToken)
-        //{
-        //    try
-        //    {
-        //        var msg = new OrderMessage()
-        //        {
-        //            OrderId = 124,
-        //            Text = "testing mess"
-        //        };
-        //
-        //        await _bus.Publish(msg);
-        //
-        //        return Ok(msg);
-        //    }
-        //    catch (RequestTimeoutException)
-        //    {
-        //        return StatusCode((int)HttpStatusCode.RequestTimeout);
-        //    }
-        //    catch (Exception)
-        //    {
-        //        return StatusCode((int)HttpStatusCode.RequestTimeout);
-        //    }
-        //}
-
-        [HttpPost("masstransit-mediator")]
+        [HttpPost("post-to-inmemory")]
         public async Task<ActionResult> Create(string code, string description, CancellationToken cancellationToken)
         {
+            /* output in console: working with me starting IBusControl in Startup
+            dbug: MassTransit[0]
+      Create send transport: loopback://localhost/urn:message:MiniBite.Api.Messages.Contracts:OrderMessage
+dbug: MassTransit.SendTransport[0]
+      SEND loopback://localhost/urn:message:MiniBite.Api.Messages.Contracts:OrderMessage c6ed0000-5d40-0015-c95a-08d8aba22af9 MiniBite.Api.Messages.Contracts.OrderMessage
+Received: its text is testing mess, its order ID is 124
+MessageConsumer-2: OrderId: 124 text: testing mess
+Taking care of OrderMessage by Cosumer-2
+MessageConsumer-1: OrderId: 124 text: testing mess
+Taking care of OrderMessage by Consumer-1
+             *
+             */
+
             try
             {
-                var response = await _productAddedClient.GetResponse<ProductAddedReceived>(new
+                var msg = new OrderMessage()
                 {
-                    Id = Guid.NewGuid(),
-                    Code = code,
-                    Description = description,
-                    Price = 2.55M,
-                    CategoryName = "some category"
-                }, cancellationToken);
+                    OrderId = 124,
+                    Text = "testing mess"
+                };
 
-                return Ok(response.Message);
+                await _bus.Publish(msg);
+
+                return Ok(msg);
             }
             catch (RequestTimeoutException)
             {
@@ -93,6 +80,32 @@ namespace MiniBite.Api.Inventory.Controllers
                 return StatusCode((int)HttpStatusCode.RequestTimeout);
             }
         }
+
+        //[HttpPost("masstransit-mediator")]
+        //public async Task<ActionResult> Create(string code, string description, CancellationToken cancellationToken)
+        //{
+        //    try
+        //    {
+        //        var response = await _productAddedClient.GetResponse<ProductAddedReceived>(new
+        //        {
+        //            Id = Guid.NewGuid(),
+        //            Code = code,
+        //            Description = description,
+        //            Price = 2.55M,
+        //            CategoryName = "some category"
+        //        }, cancellationToken);
+        //
+        //        return Ok(response.Message);
+        //    }
+        //    catch (RequestTimeoutException)
+        //    {
+        //        return StatusCode((int)HttpStatusCode.RequestTimeout);
+        //    }
+        //    catch (Exception)
+        //    {
+        //        return StatusCode((int)HttpStatusCode.RequestTimeout);
+        //    }
+        //}
 
         [HttpPost("publish-to-aztopic")]
         public async Task<ActionResult> CreateAndPublishMessageToAzureServiceBus(string code, string description, CancellationToken cancellationToken)

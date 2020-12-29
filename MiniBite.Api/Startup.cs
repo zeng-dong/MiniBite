@@ -9,13 +9,13 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using MiniBite.Api.Integration;
 using MiniBite.Api.Inventory.DataAccess;
+using MiniBite.Api.Inventory.Extensions;
 using MiniBite.Api.Messages.Components.Cosumers;
 using MiniBite.Api.Messages.Contracts;
 using MiniBite.Api.Purchasing.DataAccess;
 using MiniBite.Api.Purchasing.Extensions;
 using MiniBite.Api.Purchasing.Messaging;
 using MiniBite.Api.Purchasing.Services;
-using MiniBite.Api.Sales.Entities;
 using MiniBite.Api.Sales.Extensions;
 using MiniBite.Api.Sales.Messaging;
 using System;
@@ -37,38 +37,38 @@ namespace MiniBite.Api
             var asbcs = Configuration["AzureServiceBusConnectionString"].ToString();
             string ticketOrdersTopic = "ticket-orders";
 
-            var azureServiceBus = Bus.Factory.CreateUsingAzureServiceBus(busFactoryConfig =>
-            {
-                busFactoryConfig.Message<TicketOrder>(configTopology => { configTopology.SetEntityName(ticketOrdersTopic); });
-
-                busFactoryConfig.Host(asbcs, hostConfig =>
-                {
-                    hostConfig.TransportType = Microsoft.Azure.ServiceBus.TransportType.AmqpWebSockets;
-                });
-            });
-            services.AddMassTransit(config => config.AddBus(provider => azureServiceBus));
-            services.AddSingleton<IPublishEndpoint>(azureServiceBus);
-            services.AddSingleton<ISendEndpointProvider>(azureServiceBus);
-            services.AddSingleton<IBus>(azureServiceBus);            // optional
-
-            // I try to use inmemory bus here
-            //var inMemorybus = Bus.Factory.CreateUsingInMemory(sbc =>
+            //var azureServiceBus = Bus.Factory.CreateUsingAzureServiceBus(busFactoryConfig =>
             //{
+            //    busFactoryConfig.Message<TicketOrder>(configTopology => { configTopology.SetEntityName(ticketOrdersTopic); });
             //
-            //
-            //    sbc.ReceiveEndpoint("order_queue", ep =>
+            //    busFactoryConfig.Host(asbcs, hostConfig =>
             //    {
-            //        ep.Handler<OrderMessage>(context =>
-            //        {
-            //            return Console.Out.WriteLineAsync($"Received: its text is {context.Message.Text}, its order ID is {context.Message.OrderId}");
-            //        });
-            //
-            //        ep.Consumer<MessageConsumerOne>();
-            //        ep.Consumer<MessageConsumerTwo>();
+            //        hostConfig.TransportType = Microsoft.Azure.ServiceBus.TransportType.AmqpWebSockets;
             //    });
             //});
-            //services.AddMassTransit(config => config.AddBus(provider => inMemorybus));
-            //services.AddSingleton<IBus>(inMemorybus);
+            //services.AddMassTransit(config => config.AddBus(provider => azureServiceBus));
+            //services.AddSingleton<IPublishEndpoint>(azureServiceBus);
+            //services.AddSingleton<ISendEndpointProvider>(azureServiceBus);
+            //services.AddSingleton<IBus>(azureServiceBus);            // optional
+
+            // I try to use inmemory bus here
+            var inMemorybus = Bus.Factory.CreateUsingInMemory(sbc =>
+            {
+
+
+                sbc.ReceiveEndpoint("order_queue", ep =>
+                {
+                    ep.Handler<OrderMessage>(context =>
+                    {
+                        return Console.Out.WriteLineAsync($"Received: its text is {context.Message.Text}, its order ID is {context.Message.OrderId}");
+                    });
+
+                    ep.Consumer<MessageConsumerOne>();
+                    ep.Consumer<MessageConsumerTwo>();
+                });
+            });
+            services.AddMassTransit(config => config.AddBus(provider => inMemorybus));
+            services.AddSingleton<IBus>(inMemorybus);
 
             services.AddMediator(cfg =>
             {
@@ -171,6 +171,8 @@ namespace MiniBite.Api
 
             app.UseSalesAzureServiceBusConsumer();
             app.UsePurchasingAzureServiceBusConsumer();
+
+            app.UseMassTransitInMemoryTransport();
         }
     }
 }
