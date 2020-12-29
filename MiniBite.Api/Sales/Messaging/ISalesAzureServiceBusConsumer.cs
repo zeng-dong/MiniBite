@@ -1,6 +1,6 @@
 ﻿namespace MiniBite.Api.Sales.Messaging
 {
-    public interface IAzureServiceBusConsumer
+    public interface ISalesAzureServiceBusConsumer
     {
         void Start();
         void Stop();
