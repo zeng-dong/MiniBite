@@ -80,16 +80,15 @@ namespace MiniBite.ConsoleSubscriber
 
             var azureServiceBus = Bus.Factory.CreateUsingAzureServiceBus(busFactoryConfig =>
             {
-                busFactoryConfig.Message<TicketOrder>(x => x.SetEntityName(ticketOrdersTopic));
-
                 busFactoryConfig.Host(ConnectionString, hostConfig => hostConfig.TransportType = TransportType.AmqpWebSockets);
+
+                busFactoryConfig.Message<TicketOrder>(x => x.SetEntityName(ticketOrdersTopic));
 
                 busFactoryConfig.SubscriptionEndpoint<TicketOrder>(subscriptionName, configurator =>
                 {
                     configurator.Consumer<TicketPurchasedConsumer>(provider);
                 });
 
-                // setup Azure queue consumer
                 busFactoryConfig.ReceiveEndpoint(queueName, configurator =>
                 {
                     configurator.Consumer<TicketCancellationConsumer>(provider);

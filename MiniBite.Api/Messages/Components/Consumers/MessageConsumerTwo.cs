@@ -3,7 +3,7 @@ using MiniBite.Api.Messages.Contracts;
 using System;
 using System.Threading.Tasks;
 
-namespace MiniBite.Api.Messages.Components.Cosumers
+namespace MiniBite.Api.Messages.Components.Consumers
 {
     public class MessageConsumerTwo : IConsumer<OrderMessage>
     {

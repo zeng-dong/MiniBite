@@ -29,10 +29,12 @@ namespace MiniBite.Api.Inventory.Controllers
         //    _messageBus = messageBus;
         //}
 
-        public ProductsController(InventoryDbContext context, IMessageBus messageBus, IBus bus)
+        public ProductsController(InventoryDbContext context,
+            //IMessageBus messageBus,               // use this if use azure service bus
+            IBus bus)
         {
             _context = context;
-            _messageBus = messageBus;
+            //_messageBus = messageBus;            // use this if use azure service bus
             _bus = bus;
         }
 
@@ -64,7 +66,7 @@ Taking care of OrderMessage by Consumer-1
                 var msg = new OrderMessage()
                 {
                     OrderId = 124,
-                    Text = "testing mess"
+                    Text = "testing mess " + code + " - " + description
                 };
 
                 await _bus.Publish(msg);

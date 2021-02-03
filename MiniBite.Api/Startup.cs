@@ -7,17 +7,12 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
-using MiniBite.Api.Integration;
 using MiniBite.Api.Inventory.DataAccess;
 using MiniBite.Api.Inventory.Extensions;
-using MiniBite.Api.Messages.Components.Cosumers;
+using MiniBite.Api.Messages.Components.Consumers;
 using MiniBite.Api.Messages.Contracts;
 using MiniBite.Api.Purchasing.DataAccess;
-using MiniBite.Api.Purchasing.Extensions;
-using MiniBite.Api.Purchasing.Messaging;
 using MiniBite.Api.Purchasing.Services;
-using MiniBite.Api.Sales.Extensions;
-using MiniBite.Api.Sales.Messaging;
 using System;
 using System.Linq;
 
@@ -54,8 +49,6 @@ namespace MiniBite.Api
             // I try to use inmemory bus here
             var inMemorybus = Bus.Factory.CreateUsingInMemory(sbc =>
             {
-
-
                 sbc.ReceiveEndpoint("order_queue", ep =>
                 {
                     ep.Handler<OrderMessage>(context =>
@@ -129,11 +122,11 @@ namespace MiniBite.Api
             services.AddSingleton<PurchasingDbInitializer>();
 
             // I use this bus to post
-            services.AddSingleton<IMessageBus, AzureServiceBusMessageBus>();
+            //services.AddSingleton<IMessageBus, AzureServiceBusMessageBus>();
 
             // I use these consumers to consume
-            services.AddSingleton<ISalesAzureServiceBusConsumer, SalesAzureServiceBusConsumer>();
-            services.AddSingleton<IPurchasingAzureServiceBusConsumer, PurchasingAzureServiceBusConsumer>();
+            //services.AddSingleton<ISalesAzureServiceBusConsumer, SalesAzureServiceBusConsumer>();
+            //services.AddSingleton<IPurchasingAzureServiceBusConsumer, PurchasingAzureServiceBusConsumer>();
         }
 
         public void Configure(IApplicationBuilder app,
@@ -169,8 +162,8 @@ namespace MiniBite.Api
                 endpoints.MapControllers();
             });
 
-            app.UseSalesAzureServiceBusConsumer();
-            app.UsePurchasingAzureServiceBusConsumer();
+            //app.UseSalesAzureServiceBusConsumer();
+            //app.UsePurchasingAzureServiceBusConsumer();
 
             app.UseMassTransitInMemoryTransport();
         }
