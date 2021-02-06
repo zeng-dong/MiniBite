@@ -162,6 +162,7 @@ namespace MiniBite.Api
                 endpoints.MapControllers();
             });
 
+            // note: need to start the bus
             //app.UseSalesAzureServiceBusConsumer();
             //app.UsePurchasingAzureServiceBusConsumer();
 
